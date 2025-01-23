@@ -77,6 +77,7 @@ config:
   theme: base
 ---
 
+```mermaid
 graph LR
     subgraph Entrada
         Entrada1["`<table><thead><tr><th colspan="2" style="text-align: left;">tb_lancamento_transformado</th></tr></thead>
@@ -143,3 +144,4 @@ graph LR
     class Entrada1,E sourceTable
     class B stagingTable
     class C,D finalTable
+```
