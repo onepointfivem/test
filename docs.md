@@ -69,3 +69,77 @@ Re-calcula os campos: `debito`, `credito` e `total_lancamento` de acordo com os 
 
 
 ## unir_saldos_lancamentos_base_carteira_consolidada
+
+
+---
+config:
+  look: handDrawn
+  theme: base
+---
+
+graph LR
+    subgraph Entrada
+        Entrada1["`<table><thead><tr><th colspan="2" style="text-align: left;">tb_lancamento_transformado</th></tr></thead>
+    <tbody><tr>
+    <td style="text-align: left;">Particao</td>
+    <td style="text-align: right;">ingest_date</td>
+        </tr></tbody></table>`"]
+
+        Entrada2["`<left><table><thead><tr><th colspan="2">tb_saldo_transformado</th></tr></thead>
+    <tbody><tr>
+    <td style="text-align: left;">Particao</td>
+    <td style="text-align: right;">ingest_date</td>
+        </tr></tbody></table></left>`"]
+
+        Entrada3["`<table><thead><tr><th colspan="2">tb_carteira_consolidada</th></tr></thead>
+    <tbody><tr>
+    <td style="text-align: left;">Particao</td>
+    <td style="text-align: right;">produto</td></tr>
+    <tr><td></td><td style="text-align: right;">data_contabil_registro</td></tr>
+    </tbody></table>`"]
+
+        Entrada4["`<table><thead><tr><th colspan="2">tb_ponteiro_carteira</th></tr></thead>
+    <tbody><tr>
+    <td style="text-align: left;">Particao</td>
+    <td style="text-align: right;">produto</td></tr>
+    <tr><td></td><td style="text-align: right;">data_contabil_processamento</td></tr>
+    </tbody></table>`"]
+    end
+    
+    subgraph Intermediarias
+
+        Entrada11["`<b><p style="text-align: left;">agregar_saldos</b>`"]
+        Entrada21["`<b><p style="text-align: left;">agregar_lancamentos</b>`"]
+        Entrada31["`<b><p style="text-align: left;">ultima_posicao_carteira</b>`"]
+        Entrada41["`<b><p style="text-align: left;">ultima_posicao_ponteiro</b>`"]
+
+        Entrada1_2["`unir_saldos_lancamentos`"]
+        Entrada3_4["`base_carteira_consolidada`"]
+        Entrada5["processar_saldo"]
+        Entrada6["processar_lancamento"]
+    
+    end
+    
+    subgraph Saidas
+        Saida1[tb_carteira_consolidada]
+        Saida2[tb_ponteiro_carteira]
+    end
+    
+    Entrada1 --> Entrada11 --> Entrada1_2 --> Entrada3_4
+    Entrada2 --> Entrada21 --> Entrada1_2
+    Entrada3 --> Entrada31 --> Entrada3_4
+    Entrada4 --> Entrada41 --> Entrada3_4
+   
+    Entrada1_2 --> Entrada5
+    Entrada3_4 --> Entrada5
+    Entrada11 --> Entrada5
+    Entrada1_2 --> Entrada6
+    Entrada3_4 --> Entrada6
+
+    classDef sourceTable fill:#e6f3ff,stroke:#333
+    classDef stagingTable fill:#fff2cc,stroke:#333
+    classDef finalTable fill:#d5e8d4,stroke:#333
+    
+    class Entrada1,E sourceTable
+    class B stagingTable
+    class C,D finalTable
